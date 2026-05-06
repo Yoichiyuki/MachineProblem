@@ -13,7 +13,7 @@ public class Main extends JFrame {
                 private JScrollPane jScrollPane2;
                 private JPanel listPanel, bottomPanel, upperPanel;
                 private JLabel titleLabel;
-                private JToggleButton addButton, deleteButton, backButton;
+                private JButton addButton, deleteButton, backButton;
 
     public Main() {
         initComponents();
@@ -40,23 +40,23 @@ public class Main extends JFrame {
         //  - ADD button
         //  - DELETE placeholder button ("O")
         // =========================
-        addButton = new JToggleButton("ADD");
-        deleteButton = new JToggleButton("O");
-        addButton.addActionListener(this::addButtonActionPerformed);
+        addButton = new JButton("ADD");
+        deleteButton = new JButton("O");
 
+        
         bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         bottomPanel.add(addButton);
         bottomPanel.add(deleteButton);
 
         container.add(bottomPanel, BorderLayout.SOUTH);
 
-        backButton = new JToggleButton("BACK");
+        backButton = new JButton("BACK");
         backButton.setPreferredSize(new Dimension(30, 60));
 
         upperPanel = new JPanel();
         upperPanel.setLayout(null);
         upperPanel.setPreferredSize(new Dimension(400, 60));
-        backButton = new JToggleButton("<");
+        backButton = new JButton("<");
         backButton.setFocusPainted(false);
         backButton.setBounds(10, 15, 30, 20);
         titleLabel = new JLabel("PASSWORD VAULT", JLabel.CENTER);
