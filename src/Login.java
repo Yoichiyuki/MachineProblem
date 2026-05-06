@@ -63,11 +63,14 @@ public class Login extends JFrame {
         // BUTTONS
         loginButton = new JButton("Log-in");
         loginButton.setBounds(100, 300, 170, 50);
+        loginButton.addActionListener(e -> onLogin());
         logInPanel.add(loginButton);
 
         signInButton = new JButton("Sign-In");
         signInButton.setBounds(100, 380, 170, 50);
+        signInButton.addActionListener(e -> openSignIn());
         logInPanel.add(signInButton);
+
 
         // FRAME
         logInPanel.setBounds(0, 0, 400, 480);
@@ -77,24 +80,18 @@ public class Login extends JFrame {
     }
 
     // EVENTS
-    // private void onSignIn(java.awt.event.ActionEvent evt) {
-    //     logger.log(java.util.logging.Level.INFO,
-    //             "Opening SignIn window ({0})", evt.getActionCommand());
-    //     SignIn s = new SignIn();
-    //     s.setVisible(true);
-    //     dispose();
-    // }
+    private void openSignIn(){
+        new SignIn().setVisible(true);
+        dispose();
+    }
 
-    // private void onLogin(java.awt.event.ActionEvent evt) {
-    //     logger.log(java.util.logging.Level.INFO,
-    //             "Opening Main window ({0})", evt.getActionCommand());
-    //     Main m = new Main();
-    //     m.setVisible(true);
-    //     dispose();
-    // }
+    private void onLogin(){
+        new Main().setVisible(true);
+        dispose();
+    }
 
-    // public static void main(String[] args) {
-    //     SwingUtilities.invokeLater(() -> new Login().setVisible(true));
-    // }
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new Login().setVisible(true));
+    }
 
 }
