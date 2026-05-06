@@ -4,17 +4,21 @@ import javax.swing.*;
 
 public class Main extends JFrame {
 
-    private static final java.util.logging.Logger logger
-            = java.util.logging.Logger.getLogger(Main.class.getName());
-
     // =========================
     //  UI COMPONENTS (FIELDS)
     // =========================
+    
     private JPanel container;
     private JScrollPane jScrollPane2;
     private JPanel listPanel, bottomPanel, upperPanel;
     private JLabel titleLabel;
-    private JButton addButton, deleteButton, backButton;
+    private JButton addButton,backButton;
+    private JToggleButton deleteButton;
+
+    // =========================
+    // 
+    // =========================
+    private boolean deleteMode = false;
 
     public Main() {
         initComponents();
@@ -64,7 +68,7 @@ public class Main extends JFrame {
         addButton.setPreferredSize(new Dimension(300, 60));
         addButton.addActionListener(e -> onAddButton());
 
-        deleteButton = new JButton("DELETE");
+        deleteButton = new JToggleButton("DELETE");
         deleteButton.setPreferredSize(new Dimension(20, 60));
         deleteButton.addActionListener(e -> onDeleteButton());
 
@@ -99,7 +103,7 @@ public class Main extends JFrame {
         container.add(jScrollPane2, BorderLayout.CENTER);
 
         // =========================
-        //  FRAME LAYOUT WRAPPER
+        //  FRAME LAYOUT WRAPPER // dont touch HAHAHAHHA
         // =========================
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -128,11 +132,33 @@ public class Main extends JFrame {
         }
 
         private void onDeleteButton(){
-                if (listPanel.getComponentCount() > 0) {
-                        listPanel.remove(listPanel.getComponentCount() - 1);
-                        listPanel.revalidate();
-                        listPanel.repaint();
+                deleteMode = !deleteMode;
+
+                if (!deleteMode) {
+                        deleteMode = true;
+                        deleteButton.setText("Confirm Delete");
+                } else {
+                        deleteSelectedItems();
+                        deleteMode = false;
+                        deleteButton.setText("Delete");
                 }
+                
+        }
+
+        private void deleteSelectedItems() {
+                
+                Component[] components = listPanel.getComponents();
+                
+                for (Component comp : components) {
+                        if (comp instanceof JToggleButton btn) {
+                                if (btn.isSelected()) {
+                                listPanel.remove(btn);
+                        }
+                }
+        }
+
+        listPanel.revalidate();
+        listPanel.repaint();
         }
 
         private void  onAddButton(){ 
@@ -140,7 +166,7 @@ public class Main extends JFrame {
         }
 
         private void addItem(){
-                JButton item = new JButton(
+                JToggleButton item = new JToggleButton(
                         "Item " + (listPanel.getComponentCount() + 1)
                 );
 
@@ -149,6 +175,16 @@ public class Main extends JFrame {
                 item.setPreferredSize(new Dimension(290, 50));
                 item.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
                 item.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+                item.addActionListener(e -> {
+                if (!deleteMode) {
+                // NORMAL MODE → open new frame
+                new itemFrame(item.getText()).setVisible(true);
+                } else {
+                // DELETE MODE → just toggle selection (no action needed)
+                item.setSelected(!item.isSelected());
+                }
+        });
 
                 listPanel.add(Box.createVerticalStrut(10));
                 listPanel.add(item);
