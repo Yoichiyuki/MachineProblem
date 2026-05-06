@@ -43,7 +43,7 @@ public class Main extends JFrame {
         addButton = new JButton("ADD");
         deleteButton = new JButton("O");
 
-        
+
         bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         bottomPanel.add(addButton);
         bottomPanel.add(deleteButton);
@@ -67,8 +67,8 @@ public class Main extends JFrame {
 
         container.add(upperPanel, BorderLayout.NORTH);
 
-        
-
+        //gokgokgok
+        // pussssssssyyyyyyyy
         // =========================
         //  LIST AREA (SCROLLABLE)
         //  - where generated items go
