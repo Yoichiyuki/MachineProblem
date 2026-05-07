@@ -33,6 +33,7 @@ public class Main extends JFrame {
         // =========================
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(400, 480));
+        setResizable(false);
 
         // =========================
         //  MAIN CONTAINER PANEL
@@ -163,9 +164,7 @@ public class Main extends JFrame {
         }
 
         private void addItem(){
-                item = new JToggleButton(
-                        "Item " + (listPanel.getComponentCount() + 1)
-                );
+                item = new JToggleButton("");
 
                 item.setFocusPainted(false);
                 item.setHorizontalAlignment(SwingConstants.CENTER);
@@ -177,7 +176,7 @@ public class Main extends JFrame {
                 item.addActionListener(e -> {
                 if (!deleteMode) {
                         // NORMAL MODE → open new frame (no toggling)
-                        openItemFrame(item.getText());
+                        openMainFrame();
                 }
                 // In delete mode, just let the JToggleButton toggle automatically
                 });
@@ -189,9 +188,14 @@ public class Main extends JFrame {
                 listPanel.repaint();
         }
 
-        private void openItemFrame(String itemName) {
-                new itemFrame(itemName).setVisible(true);
+        private void openMainFrame() {
+                // Open another frame
+                new mainFrame().setVisible(true);
         }
+
+        // private void openItemFrame() {
+        //         new itemFrame().setVisible(true);
+        // }
 
 
     public static void main(String[] args) {

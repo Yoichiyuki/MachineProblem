@@ -4,6 +4,7 @@ import javax.swing.*;
 public class itemFrame extends JFrame {
 
     private JLabel itemLabel;
+    private JPanel container;
 
     public itemFrame(String itemName) {
         initComponents(itemName);
@@ -16,17 +17,21 @@ public class itemFrame extends JFrame {
         setPreferredSize(new Dimension(300, 400));
         setResizable(false);
         setSize(300, 400);
-        
 
-        itemLabel = new JLabel(itemName, JLabel.CENTER);
-        itemLabel.setFont(new Font("Tw Cen MT Condensed Extra Bold", Font.BOLD, 24));
-        add(itemLabel, BorderLayout.CENTER);
+        container = new JPanel();
+        container.setLayout(null);
+        container.setPreferredSize(new Dimension(300, 400));
+        container.setBackground(Color.GRAY);
+
+
+
+        add(container);
         setVisible(true);
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new itemFrame("Example Item").setVisible(true);
+            new itemFrame("").setVisible(true);
         });
     }
 }
