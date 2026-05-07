@@ -13,11 +13,20 @@ public class itemFrame extends JFrame {
     private void initComponents(String itemName) {
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        setPreferredSize(new Dimension(300, 200));
+        setPreferredSize(new Dimension(300, 400));
+        setResizable(false);
+        setSize(300, 400);
+        
 
         itemLabel = new JLabel(itemName, JLabel.CENTER);
         itemLabel.setFont(new Font("Tw Cen MT Condensed Extra Bold", Font.BOLD, 24));
+        add(itemLabel, BorderLayout.CENTER);
+        setVisible(true);
+    }
 
-        add(itemLabel);
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new itemFrame("Example Item").setVisible(true);
+        });
     }
 }

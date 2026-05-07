@@ -13,7 +13,7 @@ public class Main extends JFrame {
     private JPanel listPanel, bottomPanel, upperPanel;
     private JLabel titleLabel;
     private JButton addButton,backButton;
-    private JToggleButton deleteButton;
+    private JToggleButton deleteButton, item;
 
     // =========================
     // 
@@ -132,33 +132,30 @@ public class Main extends JFrame {
         }
 
         private void onDeleteButton(){
-                deleteMode = !deleteMode;
+                deleteMode = deleteButton.isSelected();
 
-                if (!deleteMode) {
-                        deleteMode = true;
+                if (deleteMode) {
                         deleteButton.setText("Confirm Delete");
                 } else {
                         deleteSelectedItems();
-                        deleteMode = false;
                         deleteButton.setText("Delete");
                 }
                 
         }
 
         private void deleteSelectedItems() {
-                
-                Component[] components = listPanel.getComponents();
-                
-                for (Component comp : components) {
-                        if (comp instanceof JToggleButton btn) {
-                                if (btn.isSelected()) {
-                                listPanel.remove(btn);
+        Component[] components = listPanel.getComponents();
+        for (int i = components.length - 1; i >= 0; i--) {
+                Component comp = components[i];
+                if (comp instanceof JToggleButton btn && btn.isSelected()) {
+                        listPanel.remove(i); // Remove the button
+                        if (i > 0 && components[i - 1] instanceof Box.Filler) {
+                                listPanel.remove(i - 1); // Remove the preceding strut
                         }
                 }
         }
-
-        listPanel.revalidate();
-        listPanel.repaint();
+                listPanel.revalidate();
+                listPanel.repaint();
         }
 
         private void  onAddButton(){ 
@@ -166,7 +163,7 @@ public class Main extends JFrame {
         }
 
         private void addItem(){
-                JToggleButton item = new JToggleButton(
+                item = new JToggleButton(
                         "Item " + (listPanel.getComponentCount() + 1)
                 );
 
@@ -176,21 +173,24 @@ public class Main extends JFrame {
                 item.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
                 item.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+                
                 item.addActionListener(e -> {
                 if (!deleteMode) {
-                // NORMAL MODE → open new frame
-                new itemFrame(item.getText()).setVisible(true);
-                } else {
-                // DELETE MODE → just toggle selection (no action needed)
-                item.setSelected(!item.isSelected());
+                        // NORMAL MODE → open new frame (no toggling)
+                        openItemFrame(item.getText());
                 }
-        });
+                // In delete mode, just let the JToggleButton toggle automatically
+                });
 
-                listPanel.add(Box.createVerticalStrut(10));
+                item.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
                 listPanel.add(item);
 
                 listPanel.revalidate();
                 listPanel.repaint();
+        }
+
+        private void openItemFrame(String itemName) {
+                new itemFrame(itemName).setVisible(true);
         }
 
 
