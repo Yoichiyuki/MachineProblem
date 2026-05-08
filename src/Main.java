@@ -190,7 +190,7 @@ public class Main extends JFrame {
 
         private void openMainFrame() {
                 // Open another frame
-                new mainFrame().setVisible(true);
+                new mainFrame(item).setVisible(true);
         }
 
         // private void openItemFrame() {

@@ -3,9 +3,6 @@ import javax.swing.*;
 
 public class Login extends JFrame {
 
-    private static final java.util.logging.Logger logger =
-            java.util.logging.Logger.getLogger(Login.class.getName());
-
     private JPanel logInPanel;
     private JLabel titleLabel;
     private JLabel usernameLabel;

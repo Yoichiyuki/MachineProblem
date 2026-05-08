@@ -41,13 +41,26 @@ public class mainFrame extends JFrame {
     // =========================
 
     public mainFrame() {
+        this(null);
+    }
+    
+    public mainFrame(JToggleButton sourceButton) {
 
         // Frame settings
         setTitle("Password Viewer");
         setSize(320, 450);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+         // Add window listener to untoggle button on close
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                if (sourceButton != null) {
+                    sourceButton.setSelected(false);
+                }
+            }
+        });
         // Initialize UI
         initializeComponents();
 
@@ -151,6 +164,7 @@ public class mainFrame extends JFrame {
 
         // Open another frame
         new editFrame().setVisible(true);
+        this.dispose(); // Close current frame
     }
 
     // =========================

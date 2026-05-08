@@ -1,6 +1,6 @@
-
 import java.awt.*;
 import javax.swing.*;
+
 
 /**
  * Simple Edit Frame
@@ -42,7 +42,7 @@ public class editFrame extends JFrame {
         setTitle("Edit Item");
         setSize(320, 450);
         setLocationRelativeTo(null); // center screen
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         // Initialize UI
         initializeComponents();
@@ -130,21 +130,20 @@ public class editFrame extends JFrame {
 
     private void saveData() {
 
-        // Get values from fields
         String title = titleField.getText();
         String username = usernameField.getText();
         String password = passwordField.getText();
 
-        // Example output
-        System.out.println("Title: " + title);
-        System.out.println("Username: " + username);
-        System.out.println("Password: " + password);
+        if (title.isEmpty() || username.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill in all fields!");
+            return;
+        }
 
-        // Example popup
-        JOptionPane.showMessageDialog(
-                this,
-                "Data Saved!"
-        );
+        DatabaseManager.insertData(title, username, password);
+
+        JOptionPane.showMessageDialog(this, "Saved!");
+
+        dispose();
     }
 
     // =========================
@@ -153,9 +152,12 @@ public class editFrame extends JFrame {
 
     public static void main(String[] args) {
 
-        // Run GUI safely
-        SwingUtilities.invokeLater(() -> {
-            new editFrame();
-        });
-    }
+    // Create database table
+    DatabaseManager.createTable();
+
+    // Run GUI
+    SwingUtilities.invokeLater(() -> {
+        new editFrame();
+    });
+}
 }

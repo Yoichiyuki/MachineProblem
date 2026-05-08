@@ -3,15 +3,15 @@ import javax.swing.*;
 
 public class itemFrame extends JFrame {
 
-    private JLabel itemLabel;
+    // private JLabel itemLabel;
     private JPanel container;
 
-    public itemFrame(String itemName) {
-        initComponents(itemName);
+    public itemFrame() {
+        initComponents();
         setLocationRelativeTo(null); // center window
     }
 
-    private void initComponents(String itemName) {
+    private void initComponents() {
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setPreferredSize(new Dimension(300, 400));
@@ -29,9 +29,14 @@ public class itemFrame extends JFrame {
         setVisible(true);
     }
 
+    // private void openMainFrame() {
+    //     // Open another frame
+    //     new mainFrame().setVisible(true);
+    // }
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new itemFrame("").setVisible(true);
+            new itemFrame().setVisible(true);
         });
     }
 }
