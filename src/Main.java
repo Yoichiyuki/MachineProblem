@@ -1,204 +1,218 @@
-
 import java.awt.*;
+import java.util.List;
 import javax.swing.*;
+
+/**
+ * ============================================
+ * MAIN DASHBOARD (FINAL CLEAN VERSION)
+ * ============================================
+ *
+ * Purpose:
+ * - Displays all saved vault items from database
+ * - Supports Add, Delete, Open item
+ * - Refreshes UI after database changes
+ */
 
 public class Main extends JFrame {
 
     // =========================
-    //  UI COMPONENTS (FIELDS)
+    // UI COMPONENTS
     // =========================
-    
     private JPanel container;
-    private JScrollPane jScrollPane2;
+    private JScrollPane scrollPane;
     private JPanel listPanel, bottomPanel, upperPanel;
     private JLabel titleLabel;
-    private JButton addButton,backButton;
-    private JToggleButton deleteButton, item;
+    private JButton addButton;
+    private JToggleButton deleteButton;
 
     // =========================
-    // 
+    // STATE
     // =========================
     private boolean deleteMode = false;
 
+    // =========================
+    // CONSTRUCTOR
+    // =========================
     public Main() {
+
         initComponents();
-        setLocationRelativeTo(null); // center window
+        loadData();
+
+        setLocationRelativeTo(null);
     }
 
-    @SuppressWarnings("unchecked")
+    // =========================
+    // INIT UI
+    // =========================
     private void initComponents() {
 
-        // =========================
-        //  FRAME SETTINGS
-        // =========================
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new Dimension(400, 480));
+        setTitle("Password Vault");
+        setSize(400, 480);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
 
-        // =========================
-        //  MAIN CONTAINER PANEL
-        // =========================
-        container = new JPanel();
-        container.setLayout(new BorderLayout());
+        container = new JPanel(new BorderLayout());
 
         // =========================
-        //  UPPER PANEL
+        // TOP BAR
         // =========================
-        upperPanel = new JPanel();
-        upperPanel.setLayout(null);
+        upperPanel = new JPanel(null);
         upperPanel.setPreferredSize(new Dimension(400, 60));
 
-        backButton = new JButton("<");
-        backButton.setFocusPainted(false);
-        backButton.setBounds(10, 15, 30, 20);
-        backButton.addActionListener(e -> onBackButton());
-
         titleLabel = new JLabel("PASSWORD VAULT", JLabel.CENTER);
-        titleLabel.setFont(new Font("Tw Cen MT Condensed Extra Bold", Font.BOLD, 24));
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
         titleLabel.setBounds(0, 15, 400, 40);
 
         upperPanel.add(titleLabel);
-        upperPanel.add(backButton);
-
-        container.add(upperPanel, BorderLayout.NORTH);
 
         // =========================
-        //  BOTTOM PANEL
+        // LIST PANEL
         // =========================
-        addButton = new JButton("ADD");
-        addButton.setPreferredSize(new Dimension(300, 60));
-        addButton.addActionListener(e -> onAddButton());
+        listPanel = new JPanel();
+        listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
 
-        deleteButton = new JToggleButton("DELETE");
-        deleteButton.setPreferredSize(new Dimension(20, 60));
-        deleteButton.addActionListener(e -> onDeleteButton());
-
-        bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        bottomPanel.add(addButton);
-        bottomPanel.add(deleteButton);
-
-        container.add(bottomPanel, BorderLayout.SOUTH);
-
-        backButton = new JButton("BACK");
-        backButton.setPreferredSize(new Dimension(30, 60));
-
-        // =========================
-        //  LIST AREA (SCROLLABLE)
-        //  - where generated items go
-        // =========================
-        jScrollPane2 = new JScrollPane();
-        jScrollPane2.setHorizontalScrollBarPolicy(
+        scrollPane = new JScrollPane(listPanel);
+        scrollPane.setHorizontalScrollBarPolicy(
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
         );
 
-        listPanel = new JPanel(); // This will hold the list of items
+        // =========================
+        // BOTTOM PANEL
+        // =========================
+        bottomPanel = new JPanel(new FlowLayout());
 
-        // Stack items vertically
-        listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
-        listPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        listPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+        addButton = new JButton("ADD");
+        addButton.addActionListener(e -> onAdd());
 
-        jScrollPane2.setViewportView(listPanel);
+        deleteButton = new JToggleButton("DELETE");
+        deleteButton.addActionListener(e -> toggleDelete());
 
-        // Add scroll list to center area
-        container.add(jScrollPane2, BorderLayout.CENTER);
+        bottomPanel.add(addButton);
+        bottomPanel.add(deleteButton);
 
         // =========================
-        //  FRAME LAYOUT WRAPPER // dont touch HAHAHAHHA
+        // ADD TO FRAME
         // =========================
-        GroupLayout layout = new GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
+        container.add(upperPanel, BorderLayout.NORTH);
+        container.add(scrollPane, BorderLayout.CENTER);
+        container.add(bottomPanel, BorderLayout.SOUTH);
 
-        layout.setHorizontalGroup(
-                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addComponent(container, GroupLayout.DEFAULT_SIZE,
-                                GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-
-        layout.setVerticalGroup(
-                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addComponent(container, GroupLayout.DEFAULT_SIZE,
-                                480, Short.MAX_VALUE)
-        );
-
-        pack();
+        add(container);
     }
 
     // =========================
-    //  ACTION: ADD ITEM BUTTON / BACK BUTTON / DELETE BUTTON
+    // ADD BUTTON
     // =========================
-        private void onBackButton(){ 
-                new Login().setVisible(true);
-                dispose();
+    private void onAdd() {
+
+        new editFrame(this).setVisible(true);
+    }
+
+    // =========================
+// DELETE MODE TOGGLE
+// =========================
+private void toggleDelete() {
+
+    // If the toggle button is ON, enter delete mode.
+    // If the toggle button is OFF, perform deletion.
+    deleteMode = deleteButton.isSelected();
+
+    if (!deleteMode) {
+        deleteSelectedItems();
+    }
+}
+
+// =========================
+// DELETE ITEMS (UI + DATABASE)
+// =========================
+private void deleteSelectedItems() {
+
+    // Get all components in the list panel
+    Component[] comps = listPanel.getComponents();
+
+    // Loop backwards so removing components is safe
+    for (int i = comps.length - 1; i >= 0; i--) {
+
+        // Only process toggle buttons that are selected
+        if (comps[i] instanceof JToggleButton btn && btn.isSelected()) {
+
+            // Get the title from the button text
+            String title = btn.getText();
+
+            // Delete from database
+            DatabaseManager.deleteByTitle(title);
+
+            // Remove the vertical spacer right after the button (if it exists)
+            if (i + 1 < comps.length && comps[i + 1] instanceof Box.Filler) {
+                listPanel.remove(i + 1);
+            }
+
+            // Remove the button itself
+            listPanel.remove(i);
         }
+    }
 
-        private void onDeleteButton(){
-                deleteMode = deleteButton.isSelected();
+    // Exit delete mode
+    deleteMode = false;
+    deleteButton.setSelected(false);
 
-                if (deleteMode) {
-                        deleteButton.setText("Confirm Delete");
-                } else {
-                        deleteSelectedItems();
-                        deleteButton.setText("Delete");
-                }
-                
+    // Reload everything from the database
+    refreshData();
+}
+
+    // =========================
+    // LOAD DATA FROM DATABASE
+    // =========================
+    private void loadData() {
+
+        List<String[]> data = DatabaseManager.getDataList();
+
+        for (String[] row : data) {
+
+            int id = Integer.parseInt(row[0]);
+            String title = row[1];
+            String username = row[2];
+            String password = row[3];
+
+            JToggleButton item = new JToggleButton(title);
+
+            item.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+
+            item.addActionListener(e -> {
+
+            if (!deleteMode) {
+
+                // Open details frame
+                mainFrame frame = new mainFrame(id, title, username, password, this);
+
+                // Untoggle button immediately
+                item.setSelected(false);
+                frame.setVisible(true);
+            }
+        });
+
+            listPanel.add(item);
+            listPanel.add(Box.createVerticalStrut(8));
         }
+    }
 
-        private void deleteSelectedItems() {
-        Component[] components = listPanel.getComponents();
-        for (int i = components.length - 1; i >= 0; i--) {
-                Component comp = components[i];
-                if (comp instanceof JToggleButton btn && btn.isSelected()) {
-                        listPanel.remove(i); // Remove the button
-                        if (i > 0 && components[i - 1] instanceof Box.Filler) {
-                                listPanel.remove(i - 1); // Remove the preceding strut
-                        }
-                }
-        }
-                listPanel.revalidate();
-                listPanel.repaint();
-        }
+    // =========================
+    // REFRESH UI AFTER DB CHANGE
+    // =========================
+    public void refreshData() {
 
-        private void  onAddButton(){ 
-                addItem();
-        }
+        listPanel.removeAll();
+        loadData();
 
-        private void addItem(){
-                item = new JToggleButton("");
+        listPanel.revalidate();
+        listPanel.repaint();
+    }
 
-                item.setFocusPainted(false);
-                item.setHorizontalAlignment(SwingConstants.CENTER);
-                item.setPreferredSize(new Dimension(290, 50));
-                item.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
-                item.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-                
-                item.addActionListener(e -> {
-                if (!deleteMode) {
-                        // NORMAL MODE → open new frame (no toggling)
-                        openMainFrame();
-                }
-                // In delete mode, just let the JToggleButton toggle automatically
-                });
-
-                item.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
-                listPanel.add(item);
-
-                listPanel.revalidate();
-                listPanel.repaint();
-        }
-
-        private void openMainFrame() {
-                // Open another frame
-                new mainFrame(item).setVisible(true);
-        }
-
-        // private void openItemFrame() {
-        //         new itemFrame().setVisible(true);
-        // }
-
-
+    // =========================
+    // MAIN METHOD
+    // =========================
     public static void main(String[] args) {
+
         SwingUtilities.invokeLater(() -> new Main().setVisible(true));
     }
 }
