@@ -176,7 +176,12 @@ private void deleteSelectedItems() {
 
             JToggleButton item = new JToggleButton(title);
 
+            Dimension buttonSize = new Dimension(350, 50);
+
+            item.setPreferredSize(buttonSize);
+            item.setMinimumSize(buttonSize);
             item.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+            item.setAlignmentX(Component.CENTER_ALIGNMENT);
 
             item.addActionListener(e -> {
 

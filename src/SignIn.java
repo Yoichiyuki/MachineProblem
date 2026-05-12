@@ -3,9 +3,6 @@ import javax.swing.*;
 
 public class SignIn extends JFrame {
 
-    private static final java.util.logging.Logger logger =
-            java.util.logging.Logger.getLogger(SignIn.class.getName());
-
     private JPanel mainPanel;
     private JLabel titleLabel;
     private JLabel usernameLabel;
@@ -36,11 +33,13 @@ public class SignIn extends JFrame {
 
         // TITLE
         titleLabel = new JLabel("PASSWORD VAULT");
-        titleLabel.setFont(new Font("Tw Cen MT Condensed Extra Bold", Font.BOLD, 36));
+        titleLabel.setFont(
+            new Font("Tw Cen MT Condensed Extra Bold", Font.BOLD, 36)
+        );
         titleLabel.setBounds(60, 30, 300, 60);
         mainPanel.add(titleLabel);
 
-        // SIGN IN LABEL
+        // SIGN-IN LABEL
         signInLabel = new JLabel("Sign-In");
         signInLabel.setBounds(60, 120, 80, 20);
         mainPanel.add(signInLabel);
@@ -72,10 +71,10 @@ public class SignIn extends JFrame {
         confirmPasswordField.setBounds(60, 270, 260, 25);
         mainPanel.add(confirmPasswordField);
 
-        // BUTTON
+        // SIGN-IN BUTTON
         signInButton = new JButton("Sign-In");
         signInButton.setBounds(100, 350, 170, 50);
-        signInButton.addActionListener(this::onSignIn);
+        signInButton.addActionListener(e -> onSignIn());
         mainPanel.add(signInButton);
 
         // FRAME
@@ -83,13 +82,59 @@ public class SignIn extends JFrame {
         pack();
     }
 
-    private void onSignIn(java.awt.event.ActionEvent evt) {
-        logger.log(java.util.logging.Level.INFO,
-                "Sign-in clicked ({0})", evt.getActionCommand());
-        // TODO: add validation + account creation logic here
-        Main m = new Main();
-        m.setVisible(true);
-        dispose();
-    }
+    // Sign-Up Logic
+    private void onSignIn() {
 
+        String username = usernameField.getText().trim();
+        String password = new String(passwordField.getPassword());
+        String confirmPassword =
+            new String(confirmPasswordField.getPassword());
+
+        // Validation
+        if (username.isEmpty()
+                || password.isEmpty()
+                || confirmPassword.isEmpty()) {
+
+            JOptionPane.showMessageDialog(
+                this,
+                "Please fill in all fields.",
+                "Missing Information",
+                JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+
+        if (!password.equals(confirmPassword)) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Passwords do not match.",
+                "Validation Error",
+                JOptionPane.ERROR_MESSAGE
+            );
+            return;
+        }
+
+        // NOTE:
+        // For now we store password directly.
+        // Later you should hash it before storing.
+        boolean success = DatabaseManager.signUp(username, password);
+
+        if (success) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Account created successfully!"
+            );
+
+            new Login().setVisible(true);
+            dispose();
+
+        } else {
+            JOptionPane.showMessageDialog(
+                this,
+                "Username already exists.",
+                "Sign-In Failed",
+                JOptionPane.ERROR_MESSAGE
+            );
+        }
+    }
 }
