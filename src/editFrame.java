@@ -24,7 +24,7 @@ public class editFrame extends BaseFrame {
     // =========================
     // MAIN REFERENCE
     // =========================
-    private Main mainRef;
+    private final Main mainRef;
 
     // =========================
     // EDIT MODE DATA
