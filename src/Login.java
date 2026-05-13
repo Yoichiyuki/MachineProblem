@@ -109,15 +109,19 @@ public class Login extends BaseFrame {
 
         if (success) {
 
+            // ✅ SET SESSION HERE
+            int userId = DatabaseManager.getUserId(username);
+            MainSession.userId = userId;
+            MainSession.username = username;
+
             if (username.equals("admin")) {
-                new AdminMain().setVisible(true); // admin dashboard
+                new AdminMain().setVisible(true);
             } else {
-                new Main().setVisible(true); // normal user dashboard
+                new Main().setVisible(true);
             }
 
             dispose();
-
-        } else {
+        }else {
             JOptionPane.showMessageDialog(
                 this,
                 "Invalid username or password.",

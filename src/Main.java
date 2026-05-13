@@ -15,7 +15,7 @@ public class Main extends BaseFrame {
     public JPanel upperPanel;
 
     public JLabel titleLabel;
-    private JButton addButton;
+    private JButton addButton, LogoutButton;
     private JToggleButton deleteButton;
 
     // =========================
@@ -30,6 +30,7 @@ public class Main extends BaseFrame {
         super("Password Vault", 400, 480);
         setResizable(false);
         loadData();
+        System.out.println("Session userId = " + MainSession.userId);
     }
 
     // =========================
@@ -58,6 +59,7 @@ public class Main extends BaseFrame {
         bottomPanel = new JPanel(new FlowLayout());
 
         addButton = new JButton("ADD");
+        LogoutButton = new JButton("LOGOUT");
         deleteButton = new JToggleButton("DELETE");
     }
 
@@ -73,6 +75,7 @@ public class Main extends BaseFrame {
 
         // bottom
         bottomPanel.add(addButton);
+        bottomPanel.add(LogoutButton);
         bottomPanel.add(deleteButton);
 
         // container layout
@@ -97,6 +100,13 @@ public class Main extends BaseFrame {
         deleteButton.addActionListener(e -> {
             deleteMode = deleteButton.isSelected();
             if (!deleteMode) deleteSelectedItems();
+        });
+        
+        LogoutButton.addActionListener(e -> {
+            MainSession.userId = -1;
+            MainSession.username = null;
+            new Login().setVisible(true);
+            dispose();
         });
     }
 
