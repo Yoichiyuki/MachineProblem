@@ -352,4 +352,29 @@ public class DatabaseManager {
             System.out.println("Update error: " + e.getMessage());
         }
     }
+
+    public static int getUserCount() {
+        int count = 0;
+
+        try {
+            Connection conn = DriverManager.getConnection("jdbc:sqlite:vault.db");
+            Statement stmt = conn.createStatement();
+
+            ResultSet rs = stmt.executeQuery(
+                "SELECT COUNT(*) AS total FROM users"
+            );
+
+            if (rs.next()) {
+                count = rs.getInt("total");
+            }
+
+            conn.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return count;
+    }
+
 }

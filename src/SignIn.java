@@ -1,8 +1,21 @@
 import java.awt.*;
 import javax.swing.*;
 
-public class SignIn extends JFrame {
+/**
+ * ============================================
+ * SIGN-IN FRAME
+ * ============================================
+ *
+ * Purpose:
+ * - Creates a new user account
+ * - Validates user input
+ * - Returns to login after successful registration
+ */
+public class SignIn extends BaseFrame {
 
+    // =========================
+    // UI COMPONENTS
+    // =========================
     private JPanel mainPanel;
     private JLabel titleLabel;
     private JLabel usernameLabel;
@@ -16,113 +29,141 @@ public class SignIn extends JFrame {
 
     private JButton signInButton;
 
+    // =========================
+    // CONSTRUCTOR
+    // =========================
     public SignIn() {
-        initComponents();
-        setLocationRelativeTo(null);
+        // BaseFrame handles title, size, centering, and setup
+        super("Sign In", 400, 480);
     }
 
-    private void initComponents() {
+    // =========================
+    // CREATE COMPONENTS
+    // =========================
+    @Override
+    protected void initializeComponents() {
 
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new Dimension(400, 480));
-
-        // PANEL
+        // Main panel
         mainPanel = new JPanel();
         mainPanel.setBackground(new Color(204, 204, 255));
         mainPanel.setLayout(null);
 
-        // TITLE
+        // Labels
         titleLabel = new JLabel("PASSWORD VAULT");
         titleLabel.setFont(
-            new Font("Tw Cen MT Condensed Extra Bold", Font.BOLD, 36)
+                new Font(
+                        "Tw Cen MT Condensed Extra Bold",
+                        Font.BOLD,
+                        36
+                )
         );
-        titleLabel.setBounds(60, 30, 300, 60);
-        mainPanel.add(titleLabel);
 
-        // SIGN-IN LABEL
         signInLabel = new JLabel("Sign-In");
-        signInLabel.setBounds(60, 120, 80, 20);
-        mainPanel.add(signInLabel);
 
-        // USERNAME
         usernameLabel = new JLabel("Username:");
-        usernameLabel.setBounds(60, 150, 100, 20);
-        mainPanel.add(usernameLabel);
-
-        usernameField = new JTextField();
-        usernameField.setBounds(60, 170, 260, 25);
-        mainPanel.add(usernameField);
-
-        // PASSWORD
         passwordLabel = new JLabel("Password:");
-        passwordLabel.setBounds(60, 200, 100, 20);
-        mainPanel.add(passwordLabel);
-
-        passwordField = new JPasswordField();
-        passwordField.setBounds(60, 220, 260, 25);
-        mainPanel.add(passwordField);
-
-        // CONFIRM PASSWORD
         confirmLabel = new JLabel("Confirm password");
-        confirmLabel.setBounds(60, 250, 150, 20);
-        mainPanel.add(confirmLabel);
 
+        // Input fields
+        usernameField = new JTextField();
+        passwordField = new JPasswordField();
         confirmPasswordField = new JPasswordField();
-        confirmPasswordField.setBounds(60, 270, 260, 25);
-        mainPanel.add(confirmPasswordField);
 
-        // SIGN-IN BUTTON
+        // Button
         signInButton = new JButton("Sign-In");
-        signInButton.setBounds(100, 350, 170, 50);
-        signInButton.addActionListener(e -> onSignIn());
-        mainPanel.add(signInButton);
-
-        // FRAME
-        add(mainPanel);
-        pack();
     }
 
-    // Sign-Up Logic
+    // =========================
+    // ARRANGE COMPONENTS
+    // =========================
+    @Override
+    protected void setupLayout() {
+
+        // Title
+        titleLabel.setBounds(60, 30, 300, 60);
+
+        // Labels
+        signInLabel.setBounds(60, 120, 80, 20);
+
+        usernameLabel.setBounds(60, 150, 100, 20);
+        usernameField.setBounds(60, 170, 260, 25);
+
+        passwordLabel.setBounds(60, 200, 100, 20);
+        passwordField.setBounds(60, 220, 260, 25);
+
+        confirmLabel.setBounds(60, 250, 150, 20);
+        confirmPasswordField.setBounds(60, 270, 260, 25);
+
+        // Button
+        signInButton.setBounds(100, 350, 170, 50);
+
+        // Add components to panel
+        mainPanel.add(titleLabel);
+        mainPanel.add(signInLabel);
+        mainPanel.add(usernameLabel);
+        mainPanel.add(usernameField);
+        mainPanel.add(passwordLabel);
+        mainPanel.add(passwordField);
+        mainPanel.add(confirmLabel);
+        mainPanel.add(confirmPasswordField);
+        mainPanel.add(signInButton);
+
+        // Add panel to frame
+        add(mainPanel);
+    }
+
+    // =========================
+    // REGISTER EVENT LISTENERS
+    // =========================
+    @Override
+    protected void setupEvents() {
+        signInButton.addActionListener(e -> onSignIn());
+    }
+
+    // =========================
+    // SIGN-UP LOGIC
+    // =========================
     private void onSignIn() {
 
         String username = usernameField.getText().trim();
         String password = new String(passwordField.getPassword());
         String confirmPassword =
-            new String(confirmPasswordField.getPassword());
+                new String(confirmPasswordField.getPassword());
 
-        // Validation
+        // Validate input
         if (username.isEmpty()
                 || password.isEmpty()
                 || confirmPassword.isEmpty()) {
 
             JOptionPane.showMessageDialog(
-                this,
-                "Please fill in all fields.",
-                "Missing Information",
-                JOptionPane.WARNING_MESSAGE
+                    this,
+                    "Please fill in all fields.",
+                    "Missing Information",
+                    JOptionPane.WARNING_MESSAGE
             );
             return;
         }
 
         if (!password.equals(confirmPassword)) {
             JOptionPane.showMessageDialog(
-                this,
-                "Passwords do not match.",
-                "Validation Error",
-                JOptionPane.ERROR_MESSAGE
+                    this,
+                    "Passwords do not match.",
+                    "Validation Error",
+                    JOptionPane.ERROR_MESSAGE
             );
             return;
         }
 
-        // NOTE:
-        // For now we store password directly.
-        // Later you should hash it before storing.
-        boolean success = DatabaseManager.signUp(username, password);
+        // Save new account
+        boolean success = DatabaseManager.signUp(
+                username,
+                password
+        );
 
         if (success) {
             JOptionPane.showMessageDialog(
-                this,
-                "Account created successfully!"
+                    this,
+                    "Account created successfully!"
             );
 
             new Login().setVisible(true);
@@ -130,10 +171,10 @@ public class SignIn extends JFrame {
 
         } else {
             JOptionPane.showMessageDialog(
-                this,
-                "Username already exists.",
-                "Sign-In Failed",
-                JOptionPane.ERROR_MESSAGE
+                    this,
+                    "Username already exists.",
+                    "Sign-In Failed",
+                    JOptionPane.ERROR_MESSAGE
             );
         }
     }

@@ -3,14 +3,14 @@ import javax.swing.*;
 
 /**
  * ============================================
- * EDIT FRAME
+ * EDIT / ADD FRAME
  * ============================================
  *
- * Custom-coded version of your NetBeans UI
- * while keeping your current project style.
+ * Purpose:
+ * - Add new vault entry OR edit existing one
+ * - Saves data to database
  */
-
-public class editFrame extends JFrame {
+public class editFrame extends BaseFrame {
 
     // =========================
     // UI COMPONENTS
@@ -25,166 +25,106 @@ public class editFrame extends JFrame {
     // MAIN REFERENCE
     // =========================
     private Main mainRef;
+
     // =========================
-    // FOR DATABASE_UPDATE 
+    // EDIT MODE DATA
     // =========================
     private int itemId = -1;
     private boolean editMode = false;
 
     // =========================
-    // CONSTRUCTOR
+    // ADD MODE CONSTRUCTOR
     // =========================
     public editFrame(Main mainRef) {
 
+        super("Add Item", 320, 450);
+
         this.mainRef = mainRef;
-
-        setTitle("Add Item");
-        setSize(320, 450);
-        setResizable(false);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        initUI();
-
-        setVisible(true);
     }
 
     // =========================
-    // CONSTRUCTOR for DATA EDIT (with pre-filled values)
+    // EDIT MODE CONSTRUCTOR
     // =========================
+    public editFrame(Main mainRef,
+                     int itemId,
+                     String title,
+                     String username,
+                     String password) {
 
-    public editFrame(
-            Main mainRef,
-            int itemId,
-            String title,
-            String username,
-            String password
-        ) {
+        super("Edit Item", 320, 450);
 
         this.mainRef = mainRef;
         this.itemId = itemId;
         this.editMode = true;
 
-        setTitle("Edit Item");
-
-        setSize(320, 450);
-
-        setResizable(false);
-
-        setLocationRelativeTo(null);
-
-        setDefaultCloseOperation(
-                JFrame.DISPOSE_ON_CLOSE
-        );
-
-        // Create UI FIRST
-        initUI();
-
-        // THEN set values
-        titleField.setText(title);
-        userField.setText(username);
-        passField.setText(password);
-
-        setVisible(true);
+        // set values AFTER UI creation
+        SwingUtilities.invokeLater(() -> {
+            titleField.setText(title);
+            userField.setText(username);
+            passField.setText(password);
+        });
     }
 
     // =========================
-    // UI SETUP
+    // CREATE COMPONENTS
     // =========================
-    private void initUI() {
+    @Override
+    protected void initializeComponents() {
 
-        // =========================
-        // MAIN PANEL
-        // =========================
         mainPanel = new JPanel(null);
         mainPanel.setBackground(new Color(204, 204, 255));
 
-        // =========================
-        // TITLE LABEL
-        // =========================
         titleLabel = new JLabel("App name:");
-        titleLabel.setFont(new Font(
-                "Segoe UI",
-                Font.BOLD,
-                14
-        ));
-        titleLabel.setBounds(40, 5, 120, 30);
-        // =========================
-        // TITLE FIELD
-        // =========================
+
         titleField = new JTextField();
-        titleField.setHorizontalAlignment(JTextField.CENTER);
-
-        titleField.setBounds(40, 35, 220, 40);
-
-        // =========================
-        // USER LABEL
-        // =========================
         userLabel = new JLabel("Username :");
-
-        userLabel.setFont(new Font(
-                "Segoe UI",
-                Font.BOLD,
-                14
-        ));
-
-        userLabel.setBounds(40, 120, 120, 30);
-
-        // =========================
-        // USER FIELD
-        // =========================
         userField = new JTextField();
 
-        userField.setBounds(40, 155, 220, 30);
-
-        // =========================
-        // PASSWORD LABEL
-        // =========================
         passLabel = new JLabel("Password :");
-
-        passLabel.setFont(new Font(
-                "Segoe UI",
-                Font.BOLD,
-                14
-        ));
-
-        passLabel.setBounds(40, 220, 120, 30);
-
-        // =========================
-        // PASSWORD FIELD
-        // =========================
         passField = new JTextField();
 
-        passField.setBounds(40, 255, 220, 30);
-
-        // =========================
-        // SAVE BUTTON
-        // =========================
         saveButton = new JButton("SAVE");
+    }
+
+    // =========================
+    // ARRANGE COMPONENTS
+    // =========================
+    @Override
+    protected void setupLayout() {
+
+        titleLabel.setBounds(40, 5, 120, 30);
+        titleField.setBounds(40, 35, 220, 40);
+
+        userLabel.setBounds(40, 120, 120, 30);
+        userField.setBounds(40, 155, 220, 30);
+
+        passLabel.setBounds(40, 220, 120, 30);
+        passField.setBounds(40, 255, 220, 30);
 
         saveButton.setBounds(30, 340, 240, 40);
 
-        saveButton.addActionListener(e -> saveData());
-
-        // =========================
-        // ADD COMPONENTS
-        // =========================
         mainPanel.add(titleLabel);
         mainPanel.add(titleField);
-
         mainPanel.add(userLabel);
         mainPanel.add(userField);
-
         mainPanel.add(passLabel);
         mainPanel.add(passField);
-
         mainPanel.add(saveButton);
 
         add(mainPanel);
     }
 
     // =========================
-    // SAVE DATA
+    // EVENTS
+    // =========================
+    @Override
+    protected void setupEvents() {
+
+        saveButton.addActionListener(e -> saveData());
+    }
+
+    // =========================
+    // SAVE LOGIC
     // =========================
     private void saveData() {
 
@@ -193,39 +133,23 @@ public class editFrame extends JFrame {
         String pass = passField.getText();
 
         // validation
-        if (title.isEmpty()
-                || user.isEmpty()
-                || pass.isEmpty()) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Fill all fields!"
-            );
-
+        if (title.isEmpty() || user.isEmpty() || pass.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Fill all fields!");
             return;
         }
 
-        // save to database
+        // database operation
         if (editMode) {
-        DatabaseManager.updateData(itemId, title, user, pass);
-            } else {
-                DatabaseManager.insertData(title, user, pass);
-            }
-        // refresh Main UI
+            DatabaseManager.updateData(itemId, title, user, pass);
+        } else {
+            DatabaseManager.insertData(title, user, pass);
+        }
+
+        // refresh main UI
         if (mainRef != null) {
             mainRef.refreshData();
         }
 
         dispose();
-    }
-
-    // =========================
-    // TEST MAIN
-    // =========================
-    public static void main(String[] args) {
-
-        SwingUtilities.invokeLater(() -> {
-            new editFrame(null);
-        });
     }
 }

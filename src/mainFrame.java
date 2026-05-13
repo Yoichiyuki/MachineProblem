@@ -7,15 +7,11 @@ import javax.swing.*;
  * ============================================
  *
  * Purpose:
- * - Displays selected vault entry:
- *      • Title
- *      • Username
- *      • Password
- *
- * - Opens edit frame with proper reference
+ * - Displays selected vault entry
+ * - Shows title, username, and password
+ * - Opens edit frame with existing data
  */
-
-public class mainFrame extends JFrame {
+public class mainFrame extends BaseFrame {
 
     // =========================
     // UI COMPONENTS
@@ -33,70 +29,56 @@ public class mainFrame extends JFrame {
     private JButton editButton;
 
     // =========================
-    // STORED VALUES (for edit use)
+    // STORED VALUES
     // =========================
-    private int id;
-    private String title;
-    private String username;
-    private String password;
-    private Main mainRef;
+    private final int id;
+    private final String title;
+    private final String username;
+    private final String password;
+    private final Main mainRef;
 
     // =========================
-    // CONSTRUCTOR (UPDATED)
+    // CONSTRUCTOR
     // =========================
-    public mainFrame(int id, String title, String username, String password, Main mainRef){
-        // store values
+    public mainFrame(
+            int id,
+            String title,
+            String username,
+            String password,
+            Main mainRef) {
+
+        // BaseFrame handles all common frame setup
+        super("Password Viewer", 320, 450);
+
+        // Store values for display and editing
         this.id = id;
         this.title = title;
         this.username = username;
         this.password = password;
         this.mainRef = mainRef;
 
-        setTitle("Password Viewer");
-        setSize(320, 450);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(
-                JFrame.DISPOSE_ON_CLOSE
-        );
-        initializeComponents();
+        // Populate labels with actual data
         setData();
-        setVisible(true);
     }
 
     // =========================
-    // SET DATA INTO LABELS
+    // CREATE COMPONENTS
     // =========================
-    private void setData() {
-        appNameLabel.setText(title);
-        usernameValue.setText(username);
-        passwordValue.setText(password);
-    }
-
-    // =========================
-    // INIT UI
-    // =========================
-    private void initializeComponents() {
+    @Override
+    protected void initializeComponents() {
 
         mainPanel = new JPanel(null);
         mainPanel.setBackground(new Color(255, 102, 102));
 
-        // =========================
-        // TITLE
-        // =========================
+        // Title section
         titlePanel = new JPanel(new BorderLayout());
-        titlePanel.setBounds(30, 20, 240, 50);
 
         appNameLabel = new JLabel("TITLE", JLabel.CENTER);
         appNameLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
 
-        titlePanel.add(appNameLabel, BorderLayout.CENTER);
-
-        // =========================
-        // INFO
-        // =========================
+        // Information section
         infoPanel = new JPanel();
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
-        infoPanel.setBounds(30, 120, 240, 180);
 
         usernameTitle = new JLabel("Username:");
         usernameTitle.setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -108,6 +90,23 @@ public class mainFrame extends JFrame {
 
         passwordValue = new JLabel();
 
+        // Edit button
+        editButton = new JButton("EDIT");
+    }
+
+    // =========================
+    // ARRANGE COMPONENTS
+    // =========================
+    @Override
+    protected void setupLayout() {
+
+        // Title panel
+        titlePanel.setBounds(30, 20, 240, 50);
+        titlePanel.add(appNameLabel, BorderLayout.CENTER);
+
+        // Information panel
+        infoPanel.setBounds(30, 120, 240, 180);
+
         infoPanel.add(Box.createVerticalStrut(10));
         infoPanel.add(usernameTitle);
         infoPanel.add(usernameValue);
@@ -115,40 +114,59 @@ public class mainFrame extends JFrame {
         infoPanel.add(passwordTitle);
         infoPanel.add(passwordValue);
 
-        // =========================
-        // EDIT BUTTON
-        // =========================
-        editButton = new JButton("EDIT");
+        // Edit button
         editButton.setBounds(30, 330, 240, 40);
 
-        editButton.addActionListener(e -> openEditFrame());
-
-        // =========================
-        // ADD TO PANEL
-        // =========================
+        // Add everything to main panel
         mainPanel.add(titlePanel);
         mainPanel.add(infoPanel);
         mainPanel.add(editButton);
 
+        // Add panel to frame
         add(mainPanel);
     }
 
     // =========================
-    // OPEN EDIT FRAME (FIXED)
+    // REGISTER EVENT LISTENERS
+    // =========================
+    @Override
+    protected void setupEvents() {
+        editButton.addActionListener(e -> openEditFrame());
+    }
+
+    // =========================
+    // DISPLAY ENTRY DATA
+    // =========================
+    private void setData() {
+        appNameLabel.setText(title);
+        usernameValue.setText(username);
+        passwordValue.setText(password);
+    }
+
+    // =========================
+    // OPEN EDIT FRAME
     // =========================
     private void openEditFrame() {
 
-        // Pass Main reference so UI can refresh after save
-        new editFrame(mainRef,id,title,username,password).setVisible(true);
-        this.dispose();
+        // Pass Main reference so the dashboard can refresh after save
+        new editFrame(
+                mainRef,
+                id,
+                title,
+                username,
+                password
+        ).setVisible(true);
+
+        dispose();
     }
 
     // =========================
     // MAIN (TEST ONLY)
     // =========================
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new mainFrame(1 ,"Sample", "user", "pass"   ,null);
-        });
+        SwingUtilities.invokeLater(() ->
+                new mainFrame(1, "Sample", "user", "pass", null)
+                        .setVisible(true)
+        );
     }
 }
