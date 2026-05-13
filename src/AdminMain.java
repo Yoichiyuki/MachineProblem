@@ -1,55 +1,60 @@
 import java.awt.*;
 import javax.swing.*;
 
-//This is my grandchild class that extends Main. It adds admin-specific features like user count display and refresh button. It reuses all the vault display logic from Main, so I don't have to duplicate code.
-
 public class AdminMain extends Main {
 
-    private JLabel userCountLabel, DisplayLabel;
+    private JLabel userCountLabel, displayLabel;
     private JButton refreshButton;
     private JPanel adminPanel;
 
     public AdminMain() {
         super();
-
         setTitle("Admin Dashboard");
     }
 
+    // =========================
+    // UI COMPONENTS
+    // =========================
     @Override
     protected void initializeComponents() {
 
         super.initializeComponents();
 
-        userCountLabel = new JLabel();
-        userCountLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        userCountLabel.setBounds(190, 80, 100, 30);
-        
-        DisplayLabel = new JLabel("Total Users:");
-        DisplayLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        DisplayLabel.setBounds(123, 20, 150, 30);
+        displayLabel = new JLabel("Total Users:");
+        displayLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
+
+        userCountLabel = new JLabel("0");
+        userCountLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
 
         refreshButton = new JButton("Refresh Count");
-        refreshButton.setBounds(132, 170, 120, 30);
+
+        adminPanel = new JPanel(null);
+        adminPanel.setPreferredSize(new Dimension(400, 100));
     }
 
+    // =========================
+    // LAYOUT
+    // =========================
     @Override
     protected void setupLayout() {
 
         super.setupLayout();
 
-        // Add admin panel on top or bottom
-        adminPanel = new JPanel();
-        adminPanel.setLayout(null);
+        displayLabel.setBounds(20, 10, 150, 30);
+        userCountLabel.setBounds(140, 10, 100, 30);
+        refreshButton.setBounds(20, 50, 150, 30);
 
-        adminPanel.add(DisplayLabel);
+        adminPanel.add(displayLabel);
         adminPanel.add(userCountLabel);
         adminPanel.add(refreshButton);
 
-        container.remove(scrollPane); // Remove existing upper panel
-        container.remove(bottomPanel); // Remove existing bottom panel
-        container.add(adminPanel, BorderLayout.CENTER);
+        // SAFE: do NOT remove Main UI components
+        container.add(adminPanel, BorderLayout.NORTH);
     }
 
+    // =========================
+    // EVENTS
+    // =========================
     @Override
     protected void setupEvents() {
 
@@ -58,6 +63,9 @@ public class AdminMain extends Main {
         refreshButton.addActionListener(e -> loadUserCount());
     }
 
+    // =========================
+    // LOAD USER COUNT
+    // =========================
     private void loadUserCount() {
         int count = DatabaseManager.getUserCount();
         userCountLabel.setText(String.valueOf(count));
@@ -66,5 +74,4 @@ public class AdminMain extends Main {
     public static void main(String[] args) {
         new AdminMain().setVisible(true);
     }
-
 }
