@@ -1,7 +1,7 @@
 import javax.swing.*;
 
 // Main, MainFrame, SignIn, and Login all extend this base class to avoid code duplication
-// This is the way I apply abstraction <3
+// This is one of the way I apply abstraction in my project<3
 
 public abstract class BaseFrame extends JFrame {
 

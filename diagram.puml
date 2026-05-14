@@ -1,5 +1,6 @@
 @startuml
 
+' alt + D lang sir para ma view usab ang UML <3
 skinparam classAttributeIconSize 0
 
 ' =========================
