@@ -1,6 +1,7 @@
 import java.awt.*;
 import javax.swing.*;
 
+// my Grandchild class - AdminMain
 public class AdminMain extends Main {
 
     private JLabel userCountLabel, displayLabel;
