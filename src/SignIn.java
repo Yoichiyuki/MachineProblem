@@ -83,7 +83,7 @@ public class SignIn extends BaseFrame {
     protected void setupLayout() {
 
         // Title
-        titleLabel.setIcon(new ImageIcon(titleImage));;
+        titleLabel.setIcon(new ImageIcon(titleImage));
         titleLabel.setBounds(44, 45, 300, 60);
 
         // Labels
