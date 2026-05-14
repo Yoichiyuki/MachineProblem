@@ -14,9 +14,11 @@ public class Main extends BaseFrame {
     public JPanel bottomPanel;
     public JPanel upperPanel;
 
-    public JLabel titleLabel;
     private JButton addButton, LogoutButton;
     private JToggleButton deleteButton;
+
+    private Image upperPanelImg;
+    private Image itemBttn, itemHover, itemSelected;
 
     // =========================
     // STATE
@@ -39,13 +41,22 @@ public class Main extends BaseFrame {
     @Override
     protected void initializeComponents() {
 
+        upperPanelImg = new ImageIcon("assets/upperPanelImg.png").getImage();
+        itemBttn = new ImageIcon("assets/ItemBttn.png").getImage();
+        itemHover = new ImageIcon("assets/ItemHover.png").getImage();
+        itemSelected = new ImageIcon("assets/ItemHover.png").getImage();
+
         container = new JPanel(new BorderLayout());
 
-        upperPanel = new JPanel(null);
+        upperPanel = new JPanel(null) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(upperPanelImg, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
         upperPanel.setPreferredSize(new Dimension(400, 60));
-
-        titleLabel = new JLabel("PASSWORD VAULT", JLabel.CENTER);
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
+ 
 
         listPanel = new JPanel();
         listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
@@ -59,7 +70,7 @@ public class Main extends BaseFrame {
         bottomPanel = new JPanel(new FlowLayout());
 
         addButton = new JButton("ADD");
-        LogoutButton = new JButton("LOGOUT");
+        LogoutButton = new JButton("CLOSE");
         deleteButton = new JToggleButton("DELETE");
     }
 
@@ -69,11 +80,36 @@ public class Main extends BaseFrame {
     @Override
     protected void setupLayout() {
 
-        // upper
-        titleLabel.setBounds(0, 15, 400, 30);
-        upperPanel.add(titleLabel);
-
         // bottom
+
+        addButton.setPreferredSize(new Dimension(100, 30));
+        addButton.setBackground(Color.WHITE);
+        addButton.setFocusPainted(false);
+        addButton.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        addButton.setForeground(Color.BLACK);
+
+        LogoutButton.setPreferredSize(new Dimension(100, 30));
+        LogoutButton.setBackground(Color.WHITE);
+        LogoutButton.setFocusPainted(false);
+        LogoutButton.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        LogoutButton.setForeground(Color.BLACK);
+
+        deleteButton.setPreferredSize(new Dimension(100, 30));
+        // Save the original color first
+        deleteButton.setBackground(Color.LIGHT_GRAY);
+        deleteButton.addItemListener(e -> {
+            if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
+                deleteButton.setForeground(Color.RED); // Make text readable on red
+            } else {
+                deleteButton.setForeground(Color.BLACK);
+            }
+        });
+       // IMPORTANT: Disable default L&F painting
+        deleteButton.setContentAreaFilled(true);
+        deleteButton.setFocusPainted(false);
+        deleteButton.setBorder(BorderFactory.createLineBorder(Color.GRAY)); // Optional: adds a border back
+
+        bottomPanel.setBackground(Color.DARK_GRAY);
         bottomPanel.add(addButton);
         bottomPanel.add(LogoutButton);
         bottomPanel.add(deleteButton);
@@ -100,6 +136,7 @@ public class Main extends BaseFrame {
         deleteButton.addActionListener(e -> {
             deleteMode = deleteButton.isSelected();
             if (!deleteMode) deleteSelectedItems();
+
         });
         
         LogoutButton.addActionListener(e -> {
@@ -129,6 +166,43 @@ public class Main extends BaseFrame {
             JToggleButton item = new JToggleButton(title);
 
             // FIX 2: stable fixed sizing (prevents shrinking)
+            item.setIcon(new ImageIcon(itemBttn));
+            item.setSelectedIcon(new ImageIcon(itemSelected));
+
+            item.setHorizontalTextPosition(SwingConstants.CENTER);
+            item.setVerticalTextPosition(SwingConstants.CENTER);
+
+        item.addMouseListener(new java.awt.event.MouseAdapter() {
+
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+
+                if (deleteMode) return; // don't hover if in delete mode
+
+                item.setIcon(new ImageIcon(itemHover));
+                item.setFont(item.getFont().deriveFont(Font.BOLD));
+                item.setForeground(Color.WHITE);
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+
+                if (deleteMode) return;
+
+                item.setIcon(new ImageIcon(itemBttn));
+                
+
+                item.setFont(item.getFont().deriveFont(Font.PLAIN));
+                item.setForeground(Color.BLACK);
+            }
+        });
+
+            item.setBorderPainted(false);
+            item.setContentAreaFilled(false);
+            item.setFocusPainted(false);
+            item.setOpaque(false);
+
+
             item.setPreferredSize(new Dimension(350, 50));
             item.setMaximumSize(new Dimension(350, 50));
             item.setMinimumSize(new Dimension(350, 50));

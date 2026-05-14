@@ -28,6 +28,7 @@ public class mainFrame extends BaseFrame {
 
     private JButton editButton;
 
+    private Image mainFrameBG, EditBttn, EditHover;
     // =========================
     // STORED VALUES
     // =========================
@@ -66,15 +67,22 @@ public class mainFrame extends BaseFrame {
     // =========================
     @Override
     protected void initializeComponents() {
-
-        mainPanel = new JPanel(null);
-        mainPanel.setBackground(new Color(255, 102, 102));
+        mainFrameBG = new ImageIcon("assets/mainFrameBG.png").getImage();
+        EditBttn = new ImageIcon("assets/EditBttn.png").getImage();
+        EditHover = new ImageIcon("assets/EditHover.png").getImage();
+        mainPanel = new JPanel(null){
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(mainFrameBG, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
 
         // Title section
         titlePanel = new JPanel(new BorderLayout());
 
         appNameLabel = new JLabel("TITLE", JLabel.CENTER);
-        appNameLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        appNameLabel.setFont(new Font("Segoe UI", Font.BOLD, 26));
 
         // Information section
         infoPanel = new JPanel();
@@ -84,14 +92,28 @@ public class mainFrame extends BaseFrame {
         usernameTitle.setFont(new Font("Segoe UI", Font.BOLD, 14));
 
         usernameValue = new JLabel();
+        usernameValue.setFont(new Font("Segoe UI", Font.PLAIN, 20));
 
         passwordTitle = new JLabel("Password:");
         passwordTitle.setFont(new Font("Segoe UI", Font.BOLD, 14));
 
         passwordValue = new JLabel();
-
+        passwordValue.setFont(new Font("Segoe UI", Font.PLAIN, 20));
         // Edit button
-        editButton = new JButton("EDIT");
+        editButton = new JButton();
+        editButton.setIcon(new ImageIcon(EditBttn));
+
+        editButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                editButton.setIcon(new ImageIcon(EditHover));
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                editButton.setIcon(new ImageIcon(EditBttn));
+            }
+        });
     }
 
     // =========================
@@ -115,7 +137,7 @@ public class mainFrame extends BaseFrame {
         infoPanel.add(passwordValue);
 
         // Edit button
-        editButton.setBounds(30, 330, 240, 40);
+        editButton.setBounds(40, 330, 220, 40);
 
         // Add everything to main panel
         mainPanel.add(titlePanel);

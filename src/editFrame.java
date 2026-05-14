@@ -9,6 +9,8 @@ public class editFrame extends BaseFrame {
     private JLabel titleLabel, userLabel, passLabel;
     private JButton saveButton;
 
+    private Image editFrameBG, saveBttn, saveHover;
+
     private final Main mainRef;
 
     private int itemId = -1;
@@ -44,8 +46,16 @@ public class editFrame extends BaseFrame {
     // =========================
     @Override
     protected void initializeComponents() {
-
-        mainPanel = new JPanel(null);
+        saveBttn = new ImageIcon("assets/SaveBttn.png").getImage();
+        saveHover = new ImageIcon("assets/SaveHover.png").getImage();
+        editFrameBG = new ImageIcon("assets/editFrameBG.png").getImage();
+        mainPanel = new JPanel(null){
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(editFrameBG, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
         mainPanel.setBackground(new Color(220, 220, 255));
 
         titleLabel = new JLabel("App Name:");
@@ -56,7 +66,8 @@ public class editFrame extends BaseFrame {
         userField = new JTextField();
         passField = new JTextField();
 
-        saveButton = new JButton("SAVE");
+        saveButton = new JButton();
+        
     }
 
     // =========================
@@ -65,16 +76,29 @@ public class editFrame extends BaseFrame {
     @Override
     protected void setupLayout() {
 
-        titleLabel.setBounds(40, 10, 200, 25);
-        titleField.setBounds(40, 35, 220, 35);
+        titleLabel.setBounds(40, 45, 200, 25);
+        titleField.setBounds(40, 65, 220, 35);
 
-        userLabel.setBounds(40, 100, 200, 25);
-        userField.setBounds(40, 125, 220, 35);
+        userLabel.setBounds(40, 125, 200, 25);
+        userField.setBounds(40, 145, 220, 35);
 
-        passLabel.setBounds(40, 190, 200, 25);
-        passField.setBounds(40, 215, 220, 35);
+        passLabel.setBounds(40, 205, 200, 25);
+        passField.setBounds(40, 235, 220, 35);
 
         saveButton.setBounds(40, 300, 220, 40);
+        saveButton.setIcon(new ImageIcon(saveBttn));
+
+        saveButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                saveButton.setIcon(new ImageIcon(saveHover));
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                saveButton.setIcon(new ImageIcon(saveBttn));
+            }
+        });
 
         mainPanel.add(titleLabel);
         mainPanel.add(titleField);

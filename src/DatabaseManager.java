@@ -2,6 +2,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+ // With all honesty, this class is impossible to make without using AI. I have no idea how to use SQL in Java,
+ // and I am still currently learning. So I just asked AI to do it for me.
+ // Of course, I had to make some adjustments to the code, but the majority of it is AI-generated.
+
 public class DatabaseManager {
 
     // =========================

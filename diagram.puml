@@ -1,0 +1,69 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+
+' =========================
+' UI LAYER
+' =========================
+class Main
+class LaunchHere
+class Login
+class SignIn
+class editFrame
+class AdminMain
+class MainFrame
+class mainFrame
+class BaseFrame
+
+' =========================
+' DATABASE LAYER
+' =========================
+class DatabaseManager
+class SQLiteDatabaseManager
+class VaultRepository
+
+' =========================
+' SESSION MANAGEMENT
+' =========================
+class MainSession {
+  +userId: int
+  +username: String
+}
+
+' =========================
+' RELATIONSHIPS (BASED ON SWING + MVC STYLE)
+' =========================
+
+' Base UI inheritance (very common in Swing apps)
+Login --|> BaseFrame
+SignIn --|> BaseFrame
+AdminMain --|> BaseFrame
+editFrame --|> BaseFrame
+MainFrame --|> BaseFrame
+mainFrame --|> BaseFrame
+LaunchHere --|> BaseFrame
+
+' Database inheritance/implementation
+SQLiteDatabaseManager --|> DatabaseManager
+
+' Repository depends on DB layer
+VaultRepository --> DatabaseManager
+VaultRepository --> SQLiteDatabaseManager
+
+' UI uses repository
+Login --> VaultRepository
+SignIn --> VaultRepository
+AdminMain --> VaultRepository
+editFrame --> VaultRepository
+MainFrame --> VaultRepository
+
+' Session usage across auth screens
+Login --> MainSession
+SignIn --> MainSession
+AdminMain --> MainSession
+
+' App entry point flow
+Main --> LaunchHere
+LaunchHere --> Login
+
+@enduml

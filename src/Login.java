@@ -7,11 +7,13 @@ public class Login extends BaseFrame {
     private JLabel titleLabel;
     private JLabel usernameLabel;
     private JLabel passwordLabel;
-    private JLabel loginLabel;
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JButton signInButton;
     private JButton loginButton;
+
+    private Image background, titleImage, logInbttn, signInbttn;
+    private Image logInHover, signInHover;
 
     public Login() {
         super("Login", 400, 480);
@@ -19,34 +21,44 @@ public class Login extends BaseFrame {
         // Make sure database tables exist
         DatabaseManager.createUsersTable();
         DatabaseManager.createTable();
+        setResizable(false);
     }
 
     @Override
     protected void initializeComponents() {
-        logInPanel = new JPanel();
-        titleLabel = new JLabel("PASSWORD VAULT");
+        background = new ImageIcon("assets/logIn.png").getImage();
+        titleImage = new ImageIcon("assets/titleLabel.png").getImage();
+        logInbttn = new ImageIcon("assets/logInBttn.png").getImage();
+        signInbttn = new ImageIcon("assets/signInBttn.png").getImage();
+        logInHover = new ImageIcon("assets/logInHover.png").getImage();
+        signInHover = new ImageIcon("assets/signInHover.png").getImage();
+
+        logInPanel = new JPanel() {
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
+        }
+    };
+
+        titleLabel = new JLabel();
         usernameLabel = new JLabel("Username:");
         passwordLabel = new JLabel("Password:");
-        loginLabel = new JLabel("Log-In");
 
         usernameField = new JTextField();
         passwordField = new JPasswordField();
 
-        loginButton = new JButton("Log-in");
-        signInButton = new JButton("Sign-In");
+        loginButton = new JButton();
+        signInButton = new JButton();
     }
 
     @Override
     protected void setupLayout() {
-        logInPanel.setBackground(new Color(255, 204, 204));
+        logInPanel.setBounds(0, 0, 400, 480);
         logInPanel.setLayout(null);
 
-        titleLabel.setFont(
-            new Font("Tw Cen MT Condensed Extra Bold", Font.BOLD, 36)
-        );
-        titleLabel.setBounds(60, 30, 300, 60);
-
-        loginLabel.setBounds(60, 150, 80, 20);
+        titleLabel.setIcon(new ImageIcon(titleImage));
+        titleLabel.setBounds(44, 45, 300, 60);
 
         usernameLabel.setBounds(60, 180, 100, 20);
         usernameField.setBounds(60, 200, 260, 25);
@@ -55,10 +67,49 @@ public class Login extends BaseFrame {
         passwordField.setBounds(60, 260, 260, 25);
 
         loginButton.setBounds(100, 300, 170, 50);
-        signInButton.setBounds(100, 380, 170, 50);
+        loginButton.setIcon(new ImageIcon(logInbttn));
+
+
+        loginButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        @Override
+        public void mouseEntered(java.awt.event.MouseEvent e) {
+            loginButton.setIcon(new ImageIcon(logInHover));
+        }
+
+        @Override
+        public void mouseExited(java.awt.event.MouseEvent e) {
+            loginButton.setIcon(new ImageIcon(logInbttn));
+        }
+    });
+
+        loginButton.setBorderPainted(false);
+        loginButton.setContentAreaFilled(false);
+        loginButton.setFocusPainted(false);
+        loginButton.setOpaque(false);
+
+        signInButton.setBounds(100, 360, 170, 50);
+        signInButton.setIcon(new ImageIcon(signInbttn));
+
+
+
+        signInButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        @Override
+        public void mouseEntered(java.awt.event.MouseEvent e) {
+            signInButton.setIcon(new ImageIcon(signInHover));
+        }
+
+        @Override
+        public void mouseExited(java.awt.event.MouseEvent e) {
+            signInButton.setIcon(new ImageIcon(signInbttn));
+        }
+    });
+
+        signInButton.setBorderPainted(false);
+        signInButton.setContentAreaFilled(false);
+        signInButton.setFocusPainted(false);
+        signInButton.setOpaque(false);
 
         logInPanel.add(titleLabel);
-        logInPanel.add(loginLabel);
         logInPanel.add(usernameLabel);
         logInPanel.add(usernameField);
         logInPanel.add(passwordLabel);
@@ -104,12 +155,10 @@ public class Login extends BaseFrame {
 
         // NOTE:
         // For now we store password directly.
-        // Later you should hash it before login.
         boolean success = DatabaseManager.login(username, password);
 
         if (success) {
 
-            // ✅ SET SESSION HERE
             int userId = DatabaseManager.getUserId(username);
             MainSession.userId = userId;
             MainSession.username = username;

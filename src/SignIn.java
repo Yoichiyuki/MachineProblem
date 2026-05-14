@@ -21,13 +21,16 @@ public class SignIn extends BaseFrame {
     private JLabel usernameLabel;
     private JLabel passwordLabel;
     private JLabel confirmLabel;
-    private JLabel signInLabel;
 
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JPasswordField confirmPasswordField;
 
     private JButton signInButton;
+
+    private Image signInBG, titleImage;
+    private Image signinbttn, signinhover;
+
 
     // =========================
     // CONSTRUCTOR
@@ -42,23 +45,23 @@ public class SignIn extends BaseFrame {
     // =========================
     @Override
     protected void initializeComponents() {
+        signInBG = new ImageIcon("assets/signInBG.png").getImage();
+        titleImage = new ImageIcon("assets/titleLabel.png").getImage();
+        signinbttn = new ImageIcon("assets/signinbttn2.png").getImage();
+        signinhover = new ImageIcon("assets/signinhover2.png").getImage();
 
         // Main panel
-        mainPanel = new JPanel();
-        mainPanel.setBackground(new Color(204, 204, 255));
+        mainPanel = new JPanel(){
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(signInBG, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
         mainPanel.setLayout(null);
 
         // Labels
-        titleLabel = new JLabel("PASSWORD VAULT");
-        titleLabel.setFont(
-                new Font(
-                        "Tw Cen MT Condensed Extra Bold",
-                        Font.BOLD,
-                        36
-                )
-        );
-
-        signInLabel = new JLabel("Sign-In");
+        titleLabel = new JLabel();
 
         usernameLabel = new JLabel("Username:");
         passwordLabel = new JLabel("Password:");
@@ -70,7 +73,7 @@ public class SignIn extends BaseFrame {
         confirmPasswordField = new JPasswordField();
 
         // Button
-        signInButton = new JButton("Sign-In");
+        signInButton = new JButton();
     }
 
     // =========================
@@ -80,26 +83,42 @@ public class SignIn extends BaseFrame {
     protected void setupLayout() {
 
         // Title
-        titleLabel.setBounds(60, 30, 300, 60);
+        titleLabel.setIcon(new ImageIcon(titleImage));;
+        titleLabel.setBounds(44, 45, 300, 60);
 
         // Labels
-        signInLabel.setBounds(60, 120, 80, 20);
+        usernameLabel.setBounds(60, 235, 100, 20);
+        usernameField.setBounds(60, 255, 260, 25);
 
-        usernameLabel.setBounds(60, 150, 100, 20);
-        usernameField.setBounds(60, 170, 260, 25);
+        passwordLabel.setBounds(60, 280, 100, 20);
+        passwordField.setBounds(60, 300, 260, 25);
 
-        passwordLabel.setBounds(60, 200, 100, 20);
-        passwordField.setBounds(60, 220, 260, 25);
-
-        confirmLabel.setBounds(60, 250, 150, 20);
-        confirmPasswordField.setBounds(60, 270, 260, 25);
+        confirmLabel.setBounds(60, 323, 150, 20);
+        confirmPasswordField.setBounds(60, 343, 260, 25);
 
         // Button
-        signInButton.setBounds(100, 350, 170, 50);
+        signInButton.setBounds(143, 378, 90, 30);
+        signInButton.setIcon(new ImageIcon(signinbttn));
+
+        signInButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                signInButton.setIcon(new ImageIcon(signinhover));
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                signInButton.setIcon(new ImageIcon(signinbttn));
+            }
+        });
+
+        signInButton.setBorderPainted(false);
+        signInButton.setContentAreaFilled(false);
+        signInButton.setFocusPainted(false);
+        signInButton.setOpaque(false);       
 
         // Add components to panel
         mainPanel.add(titleLabel);
-        mainPanel.add(signInLabel);
         mainPanel.add(usernameLabel);
         mainPanel.add(usernameField);
         mainPanel.add(passwordLabel);
